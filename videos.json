@@ -1,3 +1,64 @@
 {
-  "videos": []
+  "videos": [
+    {
+      "file": "mmdd-weather-02.rec",
+      "title": "mmdd-weather-02",
+      "description": "",
+      "duration": 14419.54,
+      "width": 88,
+      "height": 24,
+      "timestamp": 1762664776,
+      "date": "2025-11-09"
+    },
+    {
+      "file": "mmdd-weather-01.rec",
+      "title": "mmdd-weather-01",
+      "description": "",
+      "duration": 14411.62,
+      "width": 88,
+      "height": 24,
+      "timestamp": 1762664762,
+      "date": "2025-11-09"
+    },
+    {
+      "file": "004.cast",
+      "title": "004",
+      "description": "",
+      "duration": 105641.15,
+      "width": 150,
+      "height": 41,
+      "timestamp": 1755933589,
+      "date": "2025-08-23"
+    },
+    {
+      "file": "003.cast",
+      "title": "003",
+      "description": "",
+      "duration": 2057.73,
+      "width": 150,
+      "height": 41,
+      "timestamp": 1755913455,
+      "date": "2025-08-23"
+    },
+    {
+      "file": "002.cast",
+      "title": "002",
+      "description": "",
+      "duration": 36067.59,
+      "width": 136,
+      "height": 35,
+      "timestamp": 1755835115,
+      "date": "2025-08-22"
+    },
+    {
+      "file": "001.cast",
+      "title": "001",
+      "description": "",
+      "duration": 9909.38,
+      "width": 136,
+      "height": 35,
+      "timestamp": 1755767463,
+      "date": "2025-08-21"
+    }
+  ]
 }
