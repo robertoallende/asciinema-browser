@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asciinema Browser</title>
+
+  <!-- Pico CSS - Classless, responsive styling with auto dark/light mode -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+
+  <!-- asciinema player - To be added in Unit 04 -->
+  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css" /> -->
+
+  <style>
+    /* Custom styles - To be enhanced in Unit 03 */
+    body {
+      padding: 2rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    /* Video grid - To be implemented in Unit 03 */
+    #video-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Asciinema Browser</h1>
+    <p>Browse and play terminal recordings</p>
+  </header>
+
+  <main class="container">
+    <!-- Video cards will be dynamically inserted here in Unit 03 -->
+    <div id="video-grid">
+      <p>Loading videos...</p>
+    </div>
+  </main>
+
+  <!-- Modal for video playback - To be implemented in Unit 04 -->
+  <!-- <dialog id="player-modal">
+    <article>
+      <header>
+        <button aria-label="Close" rel="prev"></button>
+        <h3 id="modal-title">Video Title</h3>
+      </header>
+      <div id="player-container"></div>
+    </article>
+  </dialog> -->
+
+  <!-- asciinema player script - To be added in Unit 04 -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script> -->
+
+  <!-- Application JavaScript - To be implemented in Unit 03 -->
+  <script>
+    // TODO Unit 03: Load videos.json and render video cards
+    // TODO Unit 04: Handle click events and open player modal
+
+    console.log('Asciinema Browser - Scaffold ready for implementation');
+  </script>
+</body>
+</html>
