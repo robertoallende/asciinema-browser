@@ -7,6 +7,7 @@
 # Node modules (for generate-list.js)
 node_modules/
 
-# Optional: Uncomment if video files are too large for git
-# videos/*.cast
-# videos/*.rec
+# Video files (keep local, don't track in git)
+videos/*.cast
+videos/*.rec
+videos/*.txt
