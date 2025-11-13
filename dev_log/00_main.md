@@ -88,6 +88,7 @@ asciinema-browser/
 - **Video playback** - Full asciinema player with controls, auto-play, and responsive sizing
 - **Multiple close options** - Close button, Escape key, backdrop click
 - **Player lifecycle** - Proper initialization and cleanup to prevent memory leaks
+- **Theme selection** - Dropdown with 8 themes, persists in localStorage
 - **Accessibility** - Keyboard navigation, ARIA labels, semantic HTML throughout
 
 ## Units Implemented
@@ -97,6 +98,7 @@ asciinema-browser/
 * **02**: Video Discovery Script - Implemented Node.js script with streaming parser, error handling, supports both .cast and .rec formats, successfully tested on 6 videos
 * **03**: Video Listing Page - Implemented responsive gallery with CSS Grid, video cards with formatted metadata, hover effects, loading/error states, accessibility features
 * **04**: Player Modal & Integration - Implemented modal dialog with asciinema player, auto-play, controls, multiple close mechanisms, proper player lifecycle management
+* **05**: Theme Selection - Added theme selector dropdown with 8 themes, localStorage persistence, auto-applies to new videos
 
 ### Units In Progress
 
