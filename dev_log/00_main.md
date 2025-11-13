@@ -73,7 +73,7 @@ asciinema-browser/
 ## Project Status
 
 ### Overall Completion
-50% - Backend complete, frontend implementation next
+75% - Gallery complete, player integration next
 
 ### Completed Features
 - Project structure and directory organization
@@ -82,12 +82,16 @@ asciinema-browser/
 - HTML/CSS/JS scaffold files ready for development
 - **Video discovery script** - Automatically scans videos/ directory and generates videos.json
 - **Metadata extraction** - Parses .cast/.rec files for duration, dimensions, timestamps
+- **Video listing page** - Responsive grid gallery with beautiful cards
+- **Card metadata display** - Duration, date, terminal size formatted and displayed
+- **Accessibility** - Keyboard navigation, ARIA labels, semantic HTML
 
 ## Units Implemented
 
 ### Completed Units
 * **01**: Project Setup & MMDD Foundation - Created directory structure, scaffold files (index.html, generate-list.js, videos.json), established MMDD documentation, initialized git repository
 * **02**: Video Discovery Script - Implemented Node.js script with streaming parser, error handling, supports both .cast and .rec formats, successfully tested on 6 videos
+* **03**: Video Listing Page - Implemented responsive gallery with CSS Grid, video cards with formatted metadata, hover effects, loading/error states, accessibility features
 
 ### Units In Progress
 
@@ -95,5 +99,4 @@ None currently
 
 ## Planned Units
 
-* **03**: Video Listing Page - Create responsive HTML gallery with Pico CSS, render video cards from JSON
 * **04**: Player Modal & Integration - Implement modal dialog with asciinema player, handle playback and controls

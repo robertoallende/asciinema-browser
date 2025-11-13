@@ -12,7 +12,6 @@
   <!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css" /> -->
 
   <style>
-    /* Custom styles - To be enhanced in Unit 03 */
     body {
       padding: 2rem;
     }
@@ -22,11 +21,89 @@
       margin-bottom: 3rem;
     }
 
-    /* Video grid - To be implemented in Unit 03 */
+    header p {
+      color: var(--pico-muted-color);
+    }
+
+    /* Video grid */
     #video-grid {
       display: grid;
       gap: 1.5rem;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+
+    /* Video card styling */
+    .video-card {
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      height: 100%;
+    }
+
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .video-card article {
+      margin: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-card header {
+      text-align: left;
+      margin-bottom: 1rem;
+      flex-shrink: 0;
+    }
+
+    .video-card h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+    }
+
+    .video-card .video-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--pico-muted-color);
+      font-size: 0.875rem;
+      margin-top: auto;
+    }
+
+    .video-card .video-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .video-card .video-description {
+      color: var(--pico-muted-color);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+
+    /* Loading and error states */
+    #video-grid.loading,
+    #video-grid.error,
+    #video-grid.empty {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 300px;
+      text-align: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      #video-grid {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -37,8 +114,8 @@
   </header>
 
   <main class="container">
-    <!-- Video cards will be dynamically inserted here in Unit 03 -->
-    <div id="video-grid">
+    <!-- Video cards will be dynamically inserted here -->
+    <div id="video-grid" class="loading" aria-live="polite">
       <p>Loading videos...</p>
     </div>
   </main>
@@ -57,12 +134,135 @@
   <!-- asciinema player script - To be added in Unit 04 -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script> -->
 
-  <!-- Application JavaScript - To be implemented in Unit 03 -->
+  <!-- Application JavaScript -->
   <script>
-    // TODO Unit 03: Load videos.json and render video cards
-    // TODO Unit 04: Handle click events and open player modal
+    /**
+     * Format duration in seconds to human-readable string
+     * @param {number} seconds - Duration in seconds
+     * @returns {string} Formatted duration (e.g., "2h 45m 9s")
+     */
+    function formatDuration(seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
 
-    console.log('Asciinema Browser - Scaffold ready for implementation');
+      const parts = [];
+      if (hours > 0) parts.push(`${hours}h`);
+      if (minutes > 0) parts.push(`${minutes}m`);
+      if (secs > 0 || parts.length === 0) parts.push(`${secs}s`);
+
+      return parts.join(' ');
+    }
+
+    /**
+     * Create HTML for a single video card
+     * @param {Object} video - Video metadata object
+     * @returns {string} HTML string for the card
+     */
+    function createVideoCard(video) {
+      const description = video.description
+        ? `<p class="video-description">${escapeHtml(video.description)}</p>`
+        : '';
+
+      return `
+        <div class="video-card" data-video="${escapeHtml(video.file)}" role="button" tabindex="0">
+          <article>
+            <header>
+              <h3>${escapeHtml(video.title)}</h3>
+            </header>
+            ${description}
+            <div class="video-meta">
+              <span title="Duration">⏱️ ${formatDuration(video.duration)}</span>
+              <span title="Date">📅 ${escapeHtml(video.date)}</span>
+              <span title="Terminal size">📺 ${video.width}×${video.height}</span>
+            </div>
+          </article>
+        </div>
+      `;
+    }
+
+    /**
+     * Escape HTML to prevent XSS
+     * @param {string} text - Text to escape
+     * @returns {string} Escaped text
+     */
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * Render all video cards to the grid
+     * @param {Array} videos - Array of video objects
+     */
+    function renderVideoCards(videos) {
+      const grid = document.getElementById('video-grid');
+
+      if (!videos || videos.length === 0) {
+        grid.className = 'empty';
+        grid.innerHTML = '<p>No videos found. Add .cast files to the videos/ folder and run <code>node generate-list.js</code></p>';
+        return;
+      }
+
+      grid.className = '';
+      grid.innerHTML = videos.map(video => createVideoCard(video)).join('');
+
+      // Add click handlers for each card (for Unit 04)
+      const cards = grid.querySelectorAll('.video-card');
+      cards.forEach(card => {
+        card.addEventListener('click', handleVideoClick);
+        card.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleVideoClick.call(card);
+          }
+        });
+      });
+    }
+
+    /**
+     * Handle video card click (placeholder for Unit 04)
+     * @param {Event} event - Click event
+     */
+    function handleVideoClick(event) {
+      const videoFile = this.dataset.video;
+      console.log('Video clicked:', videoFile);
+      // TODO Unit 04: Open modal and play video
+      alert(`Video playback will be implemented in Unit 04\n\nSelected: ${videoFile}`);
+    }
+
+    /**
+     * Load videos from videos.json and render them
+     */
+    async function loadVideos() {
+      const grid = document.getElementById('video-grid');
+
+      try {
+        const response = await fetch('videos.json');
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        renderVideoCards(data.videos);
+
+      } catch (error) {
+        console.error('Failed to load videos:', error);
+        grid.className = 'error';
+        grid.innerHTML = `
+          <div>
+            <p><strong>Error loading videos</strong></p>
+            <p>${escapeHtml(error.message)}</p>
+            <p>Make sure videos.json exists and is valid.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Load videos when page loads
+    document.addEventListener('DOMContentLoaded', loadVideos);
   </script>
 </body>
 </html>
