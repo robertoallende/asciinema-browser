@@ -1,0 +1,12 @@
+# Editor files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Node modules (for generate-list.js)
+node_modules/
+
+# Optional: Uncomment if video files are too large for git
+# videos/*.cast
+# videos/*.rec
