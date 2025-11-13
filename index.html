@@ -321,8 +321,8 @@
           `videos/${videoFile}`,
           container,
           {
-            // Auto-detect theme (matches page light/dark mode)
-            theme: 'auto',
+            // Use original recording theme, fallback to asciinema default
+            theme: 'auto/asciinema',
             // Terminal sizing
             fit: 'both',
             // Show controls
