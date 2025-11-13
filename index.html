@@ -8,8 +8,8 @@
   <!-- Pico CSS - Classless, responsive styling with auto dark/light mode -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 
-  <!-- asciinema player - To be added in Unit 04 -->
-  <!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css" /> -->
+  <!-- asciinema player -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.css" />
 
   <style>
     body {
@@ -95,6 +95,67 @@
       text-align: center;
     }
 
+    /* Modal styling */
+    #player-modal {
+      max-width: 90vw;
+      max-height: 90vh;
+      padding: 0;
+      border: none;
+      border-radius: var(--pico-border-radius);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    #player-modal::backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+    }
+
+    #player-modal article {
+      margin: 0;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #player-modal header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--pico-muted-border-color);
+    }
+
+    #player-modal header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    #player-modal header button {
+      margin: 0;
+      padding: 0.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--pico-color);
+      transition: color 0.2s;
+    }
+
+    #player-modal header button:hover {
+      color: var(--pico-primary);
+    }
+
+    #player-container {
+      flex-grow: 1;
+      padding: 1.5rem;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     /* Responsive adjustments */
     @media (max-width: 768px) {
       #video-grid {
@@ -102,6 +163,15 @@
       }
 
       body {
+        padding: 1rem;
+      }
+
+      #player-modal {
+        max-width: 95vw;
+        max-height: 95vh;
+      }
+
+      #player-container {
         padding: 1rem;
       }
     }
@@ -120,22 +190,26 @@
     </div>
   </main>
 
-  <!-- Modal for video playback - To be implemented in Unit 04 -->
-  <!-- <dialog id="player-modal">
+  <!-- Modal for video playback -->
+  <dialog id="player-modal">
     <article>
       <header>
-        <button aria-label="Close" rel="prev"></button>
         <h3 id="modal-title">Video Title</h3>
+        <button aria-label="Close" onclick="closeVideoModal()">✕</button>
       </header>
       <div id="player-container"></div>
     </article>
-  </dialog> -->
+  </dialog>
 
-  <!-- asciinema player script - To be added in Unit 04 -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script> -->
+  <!-- asciinema player script -->
+  <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.6.3/dist/bundle/asciinema-player.min.js"></script>
 
   <!-- Application JavaScript -->
   <script>
+    // Store current player instance for cleanup
+    let currentPlayer = null;
+    let videosData = null;
+
     /**
      * Format duration in seconds to human-readable string
      * @param {number} seconds - Duration in seconds
@@ -208,7 +282,7 @@
       grid.className = '';
       grid.innerHTML = videos.map(video => createVideoCard(video)).join('');
 
-      // Add click handlers for each card (for Unit 04)
+      // Add click handlers for each card
       const cards = grid.querySelectorAll('.video-card');
       cards.forEach(card => {
         card.addEventListener('click', handleVideoClick);
@@ -222,14 +296,115 @@
     }
 
     /**
-     * Handle video card click (placeholder for Unit 04)
+     * Open video modal and play the selected video
+     * @param {string} videoFile - Name of the video file
+     */
+    function openVideoModal(videoFile) {
+      // Find video metadata
+      const video = videosData.find(v => v.file === videoFile);
+      if (!video) {
+        console.error('Video not found:', videoFile);
+        return;
+      }
+
+      // Update modal title
+      const modalTitle = document.getElementById('modal-title');
+      modalTitle.textContent = video.title;
+
+      // Clear player container
+      const container = document.getElementById('player-container');
+      container.innerHTML = '';
+
+      // Create player
+      try {
+        currentPlayer = AsciinemaPlayer.create(
+          `videos/${videoFile}`,
+          container,
+          {
+            // Auto-detect theme (matches page light/dark mode)
+            theme: 'auto',
+            // Terminal sizing
+            fit: 'both',
+            // Show controls
+            controls: true,
+            // Auto-play
+            autoPlay: true,
+            // Limit idle time to compress long pauses (optional)
+            // idleTimeLimit: 2,
+          }
+        );
+
+        // Open modal
+        const modal = document.getElementById('player-modal');
+        modal.showModal();
+
+        // Handle escape key and backdrop click
+        modal.addEventListener('click', handleModalBackdropClick);
+        modal.addEventListener('close', closeVideoModal);
+
+      } catch (error) {
+        console.error('Failed to create player:', error);
+        alert(`Failed to load video: ${error.message}`);
+      }
+    }
+
+    /**
+     * Close video modal and cleanup player
+     */
+    function closeVideoModal() {
+      const modal = document.getElementById('player-modal');
+
+      // Dispose of player instance
+      if (currentPlayer) {
+        try {
+          currentPlayer.dispose();
+        } catch (error) {
+          console.error('Error disposing player:', error);
+        }
+        currentPlayer = null;
+      }
+
+      // Clear container
+      const container = document.getElementById('player-container');
+      container.innerHTML = '';
+
+      // Close modal
+      if (modal.open) {
+        modal.close();
+      }
+
+      // Remove event listeners
+      modal.removeEventListener('click', handleModalBackdropClick);
+      modal.removeEventListener('close', closeVideoModal);
+    }
+
+    /**
+     * Handle clicks on modal backdrop (outside the article)
+     * @param {Event} event - Click event
+     */
+    function handleModalBackdropClick(event) {
+      const modal = document.getElementById('player-modal');
+      const rect = modal.querySelector('article').getBoundingClientRect();
+
+      // Check if click is outside the article
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      ) {
+        closeVideoModal();
+      }
+    }
+
+    /**
+     * Handle video card click
      * @param {Event} event - Click event
      */
     function handleVideoClick(event) {
       const videoFile = this.dataset.video;
-      console.log('Video clicked:', videoFile);
-      // TODO Unit 04: Open modal and play video
-      alert(`Video playback will be implemented in Unit 04\n\nSelected: ${videoFile}`);
+      console.log('Opening video:', videoFile);
+      openVideoModal(videoFile);
     }
 
     /**
@@ -246,7 +421,8 @@
         }
 
         const data = await response.json();
-        renderVideoCards(data.videos);
+        videosData = data.videos;
+        renderVideoCards(videosData);
 
       } catch (error) {
         console.error('Failed to load videos:', error);
@@ -263,6 +439,16 @@
 
     // Load videos when page loads
     document.addEventListener('DOMContentLoaded', loadVideos);
+
+    // Handle Escape key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const modal = document.getElementById('player-modal');
+        if (modal.open) {
+          closeVideoModal();
+        }
+      }
+    });
   </script>
 </body>
 </html>
